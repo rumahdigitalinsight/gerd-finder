@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GERD Finder V5 - Login</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:20px}
+.card{background:#1e293b;padding:32px;border-radius:16px;width:100%;max-width:400px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+h1{margin:0 0 8px;font-size:22px}
+p{color:#94a3b8;margin:0 0 24px;font-size:14px}
+input{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;margin-bottom:12px;box-sizing:border-box}
+button{width:100%;padding:12px;background:#22c55e;color:#000;font-weight:700;border:none;border-radius:10px;cursor:pointer;font-size:16px}
+button:disabled{opacity:.6}
+.small{font-size:12px;color:#64748b;margin-top:12px;text-align:center}
+a{color:#22c55e}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>GERD Finder V5</h1>
+<p>Login pakai Email & Order ID FO26 (cek Google Sheet)</p>
+<input id="email" type="email" placeholder="Email (contoh: kamu@gmail.com)" />
+<input id="orderId" type="text" placeholder="Order ID (contoh: FO26U7LRM3BG)" />
+<button id="loginBtn" onclick="doLogin()">Login</button>
+<div class="small">Backend: Google Sheet (Simple kayak HPP)<br>Sheet URL: gerd-finder-orders<br><a href="https://docs.google.com/spreadsheets" target="_blank">Buka Google Sheet</a></div>
+</div>
+
+<script>
+// === GOOGLE SHEET BACKEND - SUDAH LIVE SUCCESS 200 ===
+const SHEET_API = "https://script.google.com/macros/s/AKfycbw5_wYBEHctc029zxNywCsDAa1cIOVnf_ySKA1AN8OInZ3EL2gBueBkpQQ3rh900pUjsQ/exec";
+
+async function doLogin(){
+  const email = document.getElementById('email').value.trim();
+  const orderId = document.getElementById('orderId').value.trim();
+  const btn = document.getElementById('loginBtn');
+  
+  if(!email || !orderId){ alert('Isi Email & Order ID dulu'); return; }
+  
+  btn.disabled = true;
+  btn.textContent = 'Mengecek di Google Sheet...';
+  
+  try{
+    const url = SHEET_API + "?action=check&email=" + encodeURIComponent(email) + "&order_id=" + encodeURIComponent(orderId);
+    console.log('Checking:', url);
+    const res = await fetch(url);
+    const data = await res.json();
+    console.log('Result:', data);
+    
+    if(data.valid){
+      localStorage.setItem('gerd_license', data.license_key);
+      localStorage.setItem('gerd_email', data.email);
+      localStorage.setItem('gerd_order_id', data.order_id);
+      localStorage.setItem('gerd_name', data.name || '');
+      alert('✅ Login berhasil! License: ' + data.license_key);
+      // Ganti ke halaman dashboard kamu, contoh:
+      // window.location.href = 'dashboard.html';
+      btn.textContent = 'Berhasil! License: ' + data.license_key;
+    } else {
+      alert('❌ Order tidak ditemukan di Google Sheet.\n\nCek:\n1. Email harus sama persis kayak di Sheet Users\n2. Order ID harus sama persis (FO26...)\n3. Cek Sheet Users ada data tersebut');
+      btn.disabled = false;
+      btn.textContent = 'Login';
+    }
+  }catch(e){
+    console.error(e);
+    alert('Gagal konek ke Google Sheet: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Login';
+  }
+}
+</script>
+</body>
+</html>
