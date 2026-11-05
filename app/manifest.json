@@ -1,0 +1,24 @@
+{
+  "name": "GERD Finder V5 - Trigger Finder & Jadwal Anti-Kambuh",
+  "short_name": "GERD Finder V5",
+  "description": "Tool tracking pola GERD: Peta HINDARI merah, WASPADA kuning, AMAN hijau + Jadwal 07:00-19:00",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#10b981",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "../assets/icon-app-gerd-finder-v5.webp",
+      "sizes": "192x192",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../assets/icon-app-gerd-finder-v5.webp",
+      "sizes": "512x512",
+      "type": "image/webp",
+      "purpose": "any maskable"
+    }
+  ]
+}
